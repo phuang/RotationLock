@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">画面の回転ロック</string>
+    <string name="portrait_orientation_unlocked">画面の縦方向のロック解除</string>
+    <string name="portrait_orientation_locked">画面の縦方向にロック</string>
+	<string name="accelerometer_rotation_is_not_supported">加速度計の回転がサポートされない</string>
+</resources>
