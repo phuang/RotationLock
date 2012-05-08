@@ -90,7 +90,7 @@ public class RotationLockActivity extends Activity {
 	@Override
 	public void onDestroy() {
 		// Cancel the notification if activity is destroyed.
-		mNotificationManager.cancel(NOTIFICATION_ID);
+		// mNotificationManager.cancel(NOTIFICATION_ID);
 
 		// Flush all IPC commands to make sure the notification is cancelled
 		// before returning.
