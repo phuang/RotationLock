@@ -173,6 +173,18 @@ public class RotationLockActivity extends Activity {
 		return false;
 	}
 
+	private boolean toggleLandscapeOrientationLock() {
+		boolean locked = isLandscapeOrientationLocked();
+		for (int count = 0; count < RETRY_COUNT; count++) {
+			setLandscapeOrientationLock(!locked);
+			if (isLandscapeOrientationLocked() != locked) {
+				showPopupMessage (!locked);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// Get system portrait orientation lock.
 	private boolean isPortraitOrientationLocked() {
 		int value = 1;
@@ -186,8 +198,29 @@ public class RotationLockActivity extends Activity {
 		return value == 0;
 	}
 
+	private boolean isLandscapeOrientationLocked() {
+		int value = 1;
+		try {
+			value = android.provider.Settings.System.getInt(
+					getContentResolver(),
+					android.provider.Settings.System.USER_ROTATION);
+		} catch (SettingNotFoundException e) {
+			value = 1;
+		}
+		return value == 0;
+	}
+
 	// Set system portrait orientation lock.
 	private void setPortraitOrientationLock(boolean lock) {
+		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.ACCELEROMETER_ROTATION,
+				lock ? 0 : 1);
+	}
+
+	private void setLandscapeOrientationLock(boolean lock) {
+		android.provider.Settings.System.putInt(getContentResolver(),
+			android.provider.Settings.System.USER ROTATION,
+			user_rotation_1);
 		android.provider.Settings.System.putInt(getContentResolver(),
 				android.provider.Settings.System.ACCELEROMETER_ROTATION,
 				lock ? 0 : 1);
