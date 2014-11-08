@@ -139,19 +139,18 @@ public class RotationLockActivity extends Activity {
 	}
 
 	// Show notification
-	private void showNotification(boolean portlocked, boolean landlocked) {
+	private void showNotification(int dlocked) {
 		int messageId;
 		boolean locked=false;
-		if(portlocked){
+		if(dlocked==1){
 			messageId = R.string.portrait_orientation_locked;
+			locked = true;
+		}else if(dlocked==2){
+			messageId = R.string.landscape_orientation_locked;
 			locked = true;
 		}else{
 			messageId = R.string.portrait_orientation_unlocked;
 			locked = false;
-		}
-		if(landlocked){
-			messageId = R.string.landscape_orientation_locked;
-			locked = true;
 		}
 
 		Notification notification = new Notification(
@@ -293,7 +292,7 @@ public class RotationLockActivity extends Activity {
 		int locked = isOrientationLocked();
 		if (mLocked != locked) {
 			mLocked = locked;
-			showNotification(portlocked, landlocked);
+			showNotification(locked);
 		}
 	}
 }
