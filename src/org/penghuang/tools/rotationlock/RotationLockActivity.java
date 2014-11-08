@@ -276,9 +276,10 @@ public class RotationLockActivity extends Activity {
 	// Count touch duration
 	public boolean toggleOrientationLock(){
 		boolean value;
-		if(isOrientationLocked()==0){
+		int orientationValue = isOrientationLocked();
+		if(orientationValue==0){
 			value = togglePortraitOrientationLock();
-		}else if(isOrientationLocked()==1){
+		}else if(orientationValue==1){
 			value = toggleLandscapeOrientationLock();
 		}else{
 			value = toggleOrientationUnlock();
