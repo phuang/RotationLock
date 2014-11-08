@@ -204,7 +204,7 @@ public class RotationLockActivity extends Activity {
 		return false;
 	}
 
-	// Get system portrait orientation lock.
+	// Check system portrait orientation lock.
 	private boolean isPortraitOrientationLocked() {
 		int value = 1;
 		try {
@@ -219,7 +219,8 @@ public class RotationLockActivity extends Activity {
 		}
 		return value == 0;
 	}
-
+	
+	// Check system landscape orientation lock.
 	private boolean isLandscapeOrientationLocked() {
 		int value = 2;
 		try {
@@ -227,8 +228,7 @@ public class RotationLockActivity extends Activity {
 			getContentResolver(), 
 			android.provider.Settings.System.ACCELEROMETER_ROTATION) == 0){
 				value = android.provider.Settings.System.getInt(
-						getContentResolver(),
-						android.provider.Settings.System.USER_ROTATION);
+				getContentResolver(), android.provider.Settings.System.USER_ROTATION);
 			}
 		} catch (SettingNotFoundException e) {
 			value = 2;
@@ -273,7 +273,7 @@ public class RotationLockActivity extends Activity {
 				1);
 		return false;
 	}
-	// Count touch duration
+	// Advance from unlocked to locked(portrait) to locked(landscape) and back
 	public boolean toggleOrientationLock(){
 		boolean value;
 		int orientationValue = isOrientationLocked();
