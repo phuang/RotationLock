@@ -125,16 +125,13 @@ public class RotationLockActivity extends Activity {
 	}
 
 	// Show popup message.
-	private void showPopupMessage(boolean portlocked, boolean landlocked) {
-		int message ;//= locked ?
+	private void showPopupMessage(int locked) {
+		int message = R.string.portrait_orientation_unlocked;//= locked ?
 //				R.string.portrait_orientation_locked :
 //				R.string.portrait_orientation_unlocked;
-		if(portlocked){
+		if(locked==1){
 			message = R.string.portrait_orientation_locked;
-		}else{
-			message = R.string.portrait_orientation_unlocked;
-		}
-		if(landlocked){
+		}else if(locked==2){
 			message = R.string.landscape_orientation_locked;
 		}
 		Toast.makeText(this, message,
@@ -185,7 +182,8 @@ public class RotationLockActivity extends Activity {
 		for (int count = 0; count < RETRY_COUNT; count++) {
 			setPortraitOrientationLock(!locked);
 			if (isPortraitOrientationLocked() != locked) {
-				showPopupMessage (!locked,false);
+				showPopupMessage(isOrientationLocked());
+				int il = isOrientationLocked();
 				return true;
 			}
 		}
@@ -197,7 +195,8 @@ public class RotationLockActivity extends Activity {
 		for (int count = 0; count < RETRY_COUNT; count++) {
 			setLandscapeOrientationLock(!locked);
 			if (isLandscapeOrientationLocked() != locked) {
-				showPopupMessage (false,!locked);
+				int il = isOrientationLocked();
+				showPopupMessage(il);
 				return true;
 			}
 		}
