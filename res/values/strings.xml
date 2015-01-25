@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rotation Lock+Landscape</string>
+    <string name="app_name">Rotation Lock&#43;Landscape</string>
     <string name="portrait_orientation_unlocked">Orientation Unlocked</string>
     <string name="portrait_orientation_locked">Portrait Orientation Locked</string>
     <string name="landscape_orientation_locked">Landscape Orientation Locked</string>
