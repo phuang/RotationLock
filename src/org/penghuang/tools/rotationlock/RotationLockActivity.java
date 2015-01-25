@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.penghuang.tools.rotationlock;
+package org.cmotc.tools.rotationlockpp;
 
 import android.app.Activity;
 import android.app.Notification;
