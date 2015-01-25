@@ -1,0 +1,3 @@
+# view AndroidManifest.xml #generated:15
+-keep class org.cmotc.tools.rotationlockpp.RotationLockActivity { <init>(...); }
+

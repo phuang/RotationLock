@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.provider.Settings.SettingNotFoundException;
 import android.widget.Toast;
 
-
 public class RotationLockActivity extends Activity {
 	private static final int NOTIFICATION_ID = 8899;
 
