@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.penghuang.tools.rotationlock;
+package org.cmotc.tools.rotationlockpp;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.provider.Settings.SettingNotFoundException;
 import android.widget.Toast;
 
-
 public class RotationLockActivity extends Activity {
 	private static final int NOTIFICATION_ID = 8899;
 
@@ -45,14 +44,14 @@ public class RotationLockActivity extends Activity {
 
 	private NotificationManager mNotificationManager;
 
-	private boolean mLocked = false;
+	private int mLocked = 0;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mLocked = isPortraitOrientationLocked();
+		mLocked = isOrientationLocked();
 
 		mNotificationManager =
 				(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -77,7 +76,8 @@ public class RotationLockActivity extends Activity {
 		if (currentTime > mTime + 1000) {
 			mTime = currentTime;
 			if (supportAccelerometerRotation())
-				togglePortraitOrientationLock();
+				toggleOrientationLock();
+				//togglePortraitOrientationLock();
 			else {
 				Toast.makeText(this,
 						R.string.accelerometer_rotation_is_not_supported,
@@ -124,19 +124,33 @@ public class RotationLockActivity extends Activity {
 	}
 
 	// Show popup message.
-	private void showPopupMessage(boolean locked) {
-		int message = locked ?
-				R.string.portrait_orientation_locked :
-				R.string.portrait_orientation_unlocked;
+	private void showPopupMessage(int locked) {
+		int message = R.string.portrait_orientation_unlocked;//= locked ?
+//				R.string.portrait_orientation_locked :
+//				R.string.portrait_orientation_unlocked;
+		if(locked==1){
+			message = R.string.portrait_orientation_locked;
+		}else if(locked==2){
+			message = R.string.landscape_orientation_locked;
+		}
 		Toast.makeText(this, message,
 				Toast.LENGTH_SHORT).show();
 	}
 
 	// Show notification
-	private void showNotification(boolean locked) {
-		int messageId = locked ?
-				R.string.portrait_orientation_locked :
-				R.string.portrait_orientation_unlocked;
+	private void showNotification(int dlocked) {
+		int messageId;
+		boolean locked=false;
+		if(dlocked==1){
+			messageId = R.string.portrait_orientation_locked;
+			locked = true;
+		}else if(dlocked==2){
+			messageId = R.string.landscape_orientation_locked;
+			locked = true;
+		}else{
+			messageId = R.string.portrait_orientation_unlocked;
+			locked = false;
+		}
 
 		Notification notification = new Notification(
 				locked ? R.drawable.ic_locked : R.drawable.ic_unlocked,
@@ -166,36 +180,115 @@ public class RotationLockActivity extends Activity {
 		for (int count = 0; count < RETRY_COUNT; count++) {
 			setPortraitOrientationLock(!locked);
 			if (isPortraitOrientationLocked() != locked) {
-				showPopupMessage (!locked);
+				showPopupMessage(isOrientationLocked());
+				int il = isOrientationLocked();
 				return true;
 			}
 		}
 		return false;
 	}
 
-	// Get system portrait orientation lock.
+	private boolean toggleLandscapeOrientationLock() {
+		boolean locked = isLandscapeOrientationLocked();
+		for (int count = 0; count < RETRY_COUNT; count++) {
+			setLandscapeOrientationLock(!locked);
+			if (isLandscapeOrientationLocked() != locked) {
+				int il = isOrientationLocked();
+				showPopupMessage(il);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Check system portrait orientation lock.
 	private boolean isPortraitOrientationLocked() {
 		int value = 1;
 		try {
-			value = android.provider.Settings.System.getInt(
-					getContentResolver(),
-					android.provider.Settings.System.ACCELEROMETER_ROTATION);
+			if(android.provider.Settings.System.getInt(
+			getContentResolver(), 
+			android.provider.Settings.System.ACCELEROMETER_ROTATION) == 0){
+				value = android.provider.Settings.System.getInt(
+				getContentResolver(), android.provider.Settings.System.USER_ROTATION);
+			}
 		} catch (SettingNotFoundException e) {
 			value = 1;
 		}
 		return value == 0;
 	}
+	
+	// Check system landscape orientation lock.
+	private boolean isLandscapeOrientationLocked() {
+		int value = 2;
+		try {
+			if(android.provider.Settings.System.getInt(
+			getContentResolver(), 
+			android.provider.Settings.System.ACCELEROMETER_ROTATION) == 0){
+				value = android.provider.Settings.System.getInt(
+				getContentResolver(), android.provider.Settings.System.USER_ROTATION);
+			}
+		} catch (SettingNotFoundException e) {
+			value = 2;
+		}
+		return value == 1;
+	}
 
 	// Set system portrait orientation lock.
 	private void setPortraitOrientationLock(boolean lock) {
 		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.USER_ROTATION,
+				0);
+		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.ACCELEROMETER_ROTATION, 0);
+//				lock ? 0 : 1);
+	}
+
+	private void setLandscapeOrientationLock(boolean lock) {
+		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.USER_ROTATION,
+				1);
+		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.ACCELEROMETER_ROTATION, 0);
+//				lock ? 0 : 1);
+	}
+	public int isOrientationLocked(){
+		int value = 0;
+		if(isPortraitOrientationLocked()){
+			value = 1;
+		}
+		if(isLandscapeOrientationLocked()){
+			value = 2;
+		}
+		return value;
+	}
+	public boolean toggleOrientationUnlock(){
+		android.provider.Settings.System.putInt(getContentResolver(),
+				android.provider.Settings.System.USER_ROTATION,
+				0);
+		android.provider.Settings.System.putInt(getContentResolver(),
 				android.provider.Settings.System.ACCELEROMETER_ROTATION,
-				lock ? 0 : 1);
+				1);
+		return false;
+	}
+	// Advance from unlocked to locked(portrait) to locked(landscape) and back
+	public boolean toggleOrientationLock(){
+		boolean value;
+		int orientationValue = isOrientationLocked();
+		if(orientationValue==0){
+			value = togglePortraitOrientationLock();
+		}else if(orientationValue==1){
+			value = toggleLandscapeOrientationLock();
+		}else{
+			value = toggleOrientationUnlock();
+		}
+		return value;
 	}
 
 	// Handle system settings change.
 	private void systemSettingsChange() {
-		boolean locked = isPortraitOrientationLocked();
+		boolean portlocked = isPortraitOrientationLocked();
+		boolean landlocked = isLandscapeOrientationLocked();
+		int locked = isOrientationLocked();
 		if (mLocked != locked) {
 			mLocked = locked;
 			showNotification(locked);
